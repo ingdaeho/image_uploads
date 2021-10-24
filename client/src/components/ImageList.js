@@ -1,4 +1,8 @@
-const ImageList = ({ images }) => {
+import { useContext } from "react";
+import { ImageContext } from "../context/imageContext";
+
+const ImageList = () => {
+  const [images] = useContext(ImageContext);
   const imgList = images.map((image) => (
     <img
       key={image.key}
