@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const User = require("../models/user");
-const { hash } = require("bcryptjs");
+const { hash, compare } = require("bcryptjs");
 
 const userRouter = Router();
 
@@ -18,6 +18,19 @@ userRouter.post("/register", async (req, res) => {
       hashedPassword,
     }).save();
     res.json({ message: "user registered" });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+userRouter.post("/login", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.body.username });
+
+    const isValid = await compare(req.body.password, user.hashedPassword);
+    if (!isValid) throw new Error("입력하신 정보가 올바르지 않습니다.");
+
+    res.json({ message: "user validated" });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
