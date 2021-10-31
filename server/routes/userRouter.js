@@ -46,6 +46,7 @@ userRouter.patch("/login", async (req, res) => {
       message: "user validated",
       sessionId: session._id,
       name: user.name,
+      userId: user._id,
     });
   } catch (err) {
     console.log(err);
@@ -61,6 +62,21 @@ userRouter.patch("/logout", async (req, res) => {
       { $pull: { sessions: { _id: req.headers.sessionid } } }
     );
     res.json({ message: "user is logged out" });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+userRouter.get("/me", (req, res) => {
+  try {
+    if (!req.user) throw new Error("권한이 없습니다.");
+    res.json({
+      message: "success",
+      sessionId: req.headers.sessionid,
+      name: req.user.name,
+      userId: req.user._id,
+    });
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: err.message });
